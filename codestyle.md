@@ -1,12 +1,12 @@
 # Codestyle examples
 
-it's a document to exmplain the best practice approches which we should follow to keep a well-written and scalable codebase
+it's a document to explain the best practice approaches which we should follow to keep a well-written and scalable codebase
 
 
 
 ## Minimizing show notification code 
 
-It's a good approach to simplify interface when it's duplicated and only a few fields are changing from one place to another. 
+It's a good approach to simplify the interface when it's duplicated and only a few fields are changing from one place to another. 
 Also, it's important to do not use static data like strings: `'Success'` or numbers: `3000`
 
 **Bad** ❌:
@@ -25,16 +25,16 @@ Also, it's important to do not use static data like strings: `'Success'` or numb
 **Good** ✅: 
    
      this.alertService.showSuccessNotification(
-	     NotificaitonMessage.QUATE_ADDED,
-	     NotificaitonDuration.Long
+	     NotificationMessage.QUATE_ADDED,
+	     NotificationDuration.Long
 	 );
      
 
 ## Switch-case-enum approach
 
-It's important to use Enum approach instead of static string values inside a switch-case block.
+It's important to use the Enum approach instead of static string values inside a switch-case block.
 Also, a wrong handling delete action can lead to a user experience inconvenience.
-Save and delete methods which lead to API calls must be private and pretected from direct UI calls.
+Save and delete methods that lead to API calls must be private and protected from direct UI calls.
 
 **Bad** ❌:
 
