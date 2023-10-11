@@ -130,3 +130,134 @@ private _createSPO(entity: CreateStandardPricing):void {
     this.crunchService.setCrunchUpdated(true);
   }
   ```
+
+
+### [Boolean values](#style-4)
+
+  - the convention for naming Booleans is typically to prefix them with "is", "has" or "can".
+  - to do not make complicated names, 
+  - better to name in the way to make it `true` as default value
+  - avoid: negative or grammatically incorrect & ambiguous words
+
+**Bad** ❌:
+```typescript
+  inactive: boolean = false; // better to use oppposite word but true by default
+  testMode = true; // no am/is/are
+  paidAlreadyFor = true; // using prefix at the end, no 'has/have'
+  isUsersLoggedIn = true; // grammatically incorrect
+  anotherSaveLoadNeeded = false; // too difficult to understand
+
+  ```
+**Good** ✅: 
+
+```typescript
+  isActive = true;
+  isTestModeEnabled = true;
+  hasUserPaid = true;
+  isEachUserLoggedIn = true;
+  canSaveRefresh = true;
+```
+
+
+### [Mock data](#style-5)
+
+  - mocked/test (*.mock.ts) or settings (*.config.ts) data should be moved to seperate file inside the component. Do not keep it inside controller and just import it.
+
+**Bad** ❌:
+```typescript
+formFieldsArray = [
+    {
+      id: '0',
+      name: 'name',
+      text: 'text',
+      type: 'type',
+      active: true
+    },
+    {
+      id: '1',
+      name: 'name1',
+      text: 'text1',
+      type: 'type1',
+      active: false
+    },
+    {
+      id: '2',
+      name: 'name2',
+      text: 'text2',
+      type: 'type2',
+      active: true
+    },
+    ... 
+];
+  ```
+**Good** ✅: 
+
+```typescript
+ // create a forms-fields.config.ts file
+  export const formFieldsSettingArray: FormField[] = [
+    {
+      id: '0',
+      name: 'name',
+      text: 'text',
+      type: 'type',
+      active: true
+    },
+    {
+      id: '1',
+      name: 'name1',
+      text: 'text1',
+      type: 'type1',
+      active: false
+    },
+    {
+      id: '2',
+      name: 'name2',
+      text: 'text2',
+      type: 'type2',
+      active: true
+    },
+    ... 
+];
+```
+
+### [Enum in conditions](#style-6)
+
+
+- It's important to use the Enum in conditions with static primitive values: string, number, ....
+- Why?: easy to understand, no place for mistakes:
+`Admip` instead of `Admin` or `Remove` intead of `Delete`
+
+**Bad** ❌:
+```typescript
+  commandClick(args: any) {
+    if (args.type === 'Delete') {
+      ///
+    }
+    if (args?.notificationLife === 2000) {
+      //
+    }
+    if (args.role == 'agent' || args.role == 'user') {
+      //
+    }
+  }
+```
+
+**Good** ✅: 
+```typescript
+  public commandClicked(args: { 
+    type: Commands, 
+    notificationLife: NotificationDuration, 
+    role: UserRole
+  }): void {
+      if (args.type === Commands.Delete) {
+        ///
+      }
+      if (args?.notificationLife === NotificationDuration.Long) {
+        //
+      }
+      if ([UserRole.Agent, UserRole.User].includes(args.role)) {
+        //
+      }
+  }
+```
+     
