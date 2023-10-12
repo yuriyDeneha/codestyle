@@ -158,6 +158,28 @@ private _createSPO(entity: CreateStandardPricing):void {
   canSaveRefresh = true;
 ```
 
+### [Useless boolean assignments inside if-else block](#style-9)
+
+- do not use if-else to set a boolean values. Absolutely useless usage
+- `editMode` naming is also bad
+- `'Edit'` string is a bad idea, enum is much better.
+
+**Bad** ❌:
+```typescript
+  if (event.commandColumn.type === 'Edit') {
+    this.editMode = true;
+    this.cd.detectChanges();
+  } else {
+    this.editMode = false;
+    this.cd.detectChanges();
+  }
+```
+
+**Good** ✅: 
+```typescript
+  this.isEditModeEnabled = event.commandColumn.type === Commands.Edit;
+  this.cd.detectChanges();
+```
 
 ### [Mock data](#style-5)
 
@@ -260,4 +282,67 @@ formFieldsArray = [
       }
   }
 ```
-     
+
+### [Over-comlicated conditions/assignments](#style-7)
+
+
+- single responsibility principle must be used to assignments or conditions: do not add too much responsibility to a single operation
+
+**Bad** ❌:
+```typescript
+  const id = this.statementTypes?.find((item: any) => 
+    item.name === saveEvent.data.statementTypeName).id || oldId;
+```
+
+**Good** ✅: 
+```typescript
+  const searchValue: string = saveEvent.data.statementTypeName;
+
+  const selectedStatementType: StatementType = this.statementTypes?.find((item: StatementType) => item.name === searchValue);
+
+  const id = selectedStatementType ? selectedStatementType.id : oldId;
+```
+
+### [Over-comlicated conditions/assignments 2.0](#style-10)
+
+- too complicated code: good idea to define all variables before an object assignment
+- also, let's handle positive case first and then handle empty values
+
+**Bad** ❌:
+```typescript
+  let payload = {
+    statementTypeId: id,
+    minimumVolume: saveEvent.data.minimumVolume === null ? null : Math.trunc(saveEvent.data.minimumVolume),
+    points: saveEvent.data.points,
+    active: saveEvent.data.active
+  };
+```
+
+**Good** ✅: 
+```typescript
+  const minimumVolume = saveEvent.data.minimumVolume !== null ? 
+    Math.trunc(saveEvent.data.minimumVolume) : null;
+
+  const payload = {
+    statementTypeId: id,
+    minimumVolume,
+    points: saveEvent.data.points,
+    active: saveEvent.data.active
+  };
+```
+
+### [Default values/configs in html](#style-8)
+
+
+- default values should be binded from controller as static variables
+- it's a good practice to combine such values into seperate config file
+
+**Bad** ❌:
+```typescript
+  [width]='column.width || 60'
+```
+
+**Good** ✅: 
+```typescript
+  [width]='column.width || COLUMN_DEFAULT_WIDTH'
+```
