@@ -346,3 +346,43 @@ formFieldsArray = [
 ```typescript
   [width]='column.width || COLUMN_DEFAULT_WIDTH'
 ```
+
+### [Wrong method structure.](#style-11)
+
+
+- do not duplciate code (2 lines duplicated)
+- do not wrap a full method, but handle the opposite case
+- no need of `if-else` block, but simple operator `?:`
+- each `get***` method should return something. it's better to use `apply***` naming
+
+**Bad** ❌:
+```typescript
+onActionBegin(args: SortEventArgs) {
+  if(args.columnName){
+    let sortData:any = {}; 
+    if(args.direction === SORTING_TYPE.ASC){
+      sortData = sortingData?.find((val: any) => val.columnName === args.columnName);
+      this.ticketsParams.Sort = sortData.ascValue;
+      this.getTicketFilterList(this.ticketsParams.filter);
+    } else{
+      sortData = sortingData?.find((val: any) => val.columnName === args.columnName);
+      this.ticketsParams.Sort = sortData.descValue;
+      this.getTicketFilterList(this.ticketsParams.filter);
+    }
+  } 
+}
+```
+
+**Good** ✅: 
+```typescript
+onActionBegin(args: SortEventArgs) {
+  if(!args.columnName){
+    // handle empty input parameters
+    return;
+  }
+  const sortData = sortingData?.find((val: any) => val.columnName === args.columnName);
+  this.ticketsParams.Sort = args.direction === SORTING_TYPE.ASC ? 
+              sortData.ascValue : sortData.descValue;
+  this.applyFilterToTicketList(this.ticketsParams.filter);
+}
+```
