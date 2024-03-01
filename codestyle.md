@@ -386,3 +386,100 @@ onActionBegin(args: SortEventArgs) {
   this.applyFilterToTicketList(this.ticketsParams.filter);
 }
 ```
+
+### [Cimplicated HTML assignment.](#style-12)
+
+- do not comlicate HTML code
+- use ts getters instead of putting that conditions & default values inside html
+
+**Bad** ❌:
+```typescript
+ <app-page-menu
+    *ngIf="!spinner.visible && agreementQuestionLayout.value?.data?.menus.length > 0"
+    [backButtonVisible]="true"
+    [menuItems]="agreementQuestionLayout.value?.data?.menus || []"
+  ></app-page-menu>
+```
+
+**Good** ✅: 
+```typescript
+// typescript getters:
+
+  get menuItems(): Array<MenuItem> {
+    return this.agreementQuestionLayout.value?.data?.menus || [];
+  }
+
+  get isMenuVisible() {
+    return !this.spinner.visible && this.menuItems.length;
+  }
+// html code:
+  <app-page-menu
+    *ngIf="isMenuVisible"
+    [backButtonVisible]="true"
+    [menuItems]="menuItems"
+  ></app-page-menu>
+
+```
+
+### [Extend, not change.](#style-13)
+
+- good code: scalable and extandable
+- bad code: not designed to extend
+- poor thinking to resolve current task without planning how to use in the future
+- Current example: obvisiouly the direction to extend that method will be handling more and more commands
+- Current approach will require changing code to add more if else, 
+but corrent to use switch case and just extend current implementation by a new case handler.
+
+**Bad** ❌:
+```typescript
+ commandClick(args: any) {
+    if (args.commandColumn?.type === ActionBegin.COMMAND_DELETE) {
+      this.deleteRow = args.rowData;
+      const table: any = this.fDataTable.tableGrid;
+      table.defaultLocale.ConfirmDelete = SHOW_NOTIFICATION_VALUE.CONFIRM;
+    }
+  }
+```
+
+**Good** ✅:
+```typescript
+  public commandClicked(args: ClickArguments): void {
+    switch (args.commandColumn?.type) {
+      case ActionBegin.COMMAND_DELETE: {
+        this.deleteRow = args.rowData;
+        const table: any = this.fDataTable.tableGrid;
+        table.defaultLocale.ConfirmDelete = SHOW_NOTIFICATION_VALUE.CONFIRM;
+      }
+      default: break;
+    }
+  }
+```
+### [Utils, reuse, do not copy/paste](#style-14)
+
+- it's important to reduce a code duplication by reusing the same methods across different controllers
+- utils approach is good way to do that
+- current example shows how to reuse JSON.stringify functions
+
+**Bad** ❌:
+```typescript
+  onSave(onSaveEvent: any) {
+    if (JSON.stringify(onSaveEvent.data) === JSON.stringify(onSaveEvent.previousData)) {
+      // ...
+    }
+  }
+```
+
+**Good** ✅:
+```typescript
+  // are-objects-equal.util.ts  Folder: /shared/utils/....
+  export const areObjectsEqual = (object1: Object, object2: Object) => {
+    return JSON.stringify(object1) === JSON.stringify(object2);
+  }
+
+  // controller
+  public formSubmitted(onSaveEvent: {data: Type, previousData: Type} }): void {
+    if (areObjectsEqual(onSaveEvent.data, onSaveEvent.previousData)) {
+      // ...
+    }
+  }
+```
